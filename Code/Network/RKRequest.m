@@ -115,7 +115,7 @@
   	[_URLRequest release];
   	_URLRequest = nil;
   	[_params release];
-  	_params = nil;
+  	_params = nil;    
   	[_additionalHTTPHeaders release];
   	_additionalHTTPHeaders = nil;
   	[_username release];
@@ -135,11 +135,29 @@
 	if (_params && (_method != RKRequestMethodGET && _method != RKRequestMethodHEAD)) {
 		// Prefer the use of a stream over a raw body
 		if ([_params respondsToSelector:@selector(HTTPBodyStream)]) {
+            // NOTE: This causes the stream to be retained. For RKParams, this will
+            // cause a leak unless the stream is released. See [RKParams close]
 			[_URLRequest setHTTPBodyStream:[_params HTTPBodyStream]];
 		} else {
 			[_URLRequest setHTTPBody:[_params HTTPBody]];
 		}
 	}
+}
+
+- (NSData*)HTTPBody {
+    return self.URLRequest.HTTPBody;
+}
+
+- (void)setHTTPBody:(NSData *)HTTPBody {
+    [self.URLRequest setHTTPBody:HTTPBody];
+}
+
+- (NSString*)HTTPBodyString {
+    return [[[NSString alloc] initWithData:self.URLRequest.HTTPBody encoding:NSASCIIStringEncoding] autorelease];
+}
+
+- (void)setHTTPBodyString:(NSString *)HTTPBodyString {
+    [self.URLRequest setHTTPBody:[HTTPBodyString dataUsingEncoding:NSASCIIStringEncoding]];
 }
 
 - (void)addHeadersToRequest {
@@ -184,6 +202,10 @@
 	[_URLRequest setHTTPMethod:[self HTTPMethod]];
 	[self setRequestBody];
 	[self addHeadersToRequest];
+    
+    NSString* body = [[NSString alloc] initWithData:[_URLRequest HTTPBody] encoding:NSUTF8StringEncoding];
+    RKLogTrace(@"Prepared %@ URLRequest '%@'. HTTP Headers: %@. HTTP Body: %@.", [self HTTPMethod], _URLRequest, [_URLRequest allHTTPHeaderFields], body);
+    [body release];
 }
 
 - (void)cancelAndInformDelegate:(BOOL)informDelegate {
@@ -226,10 +248,8 @@
 }
 
 - (void)fireAsynchronousRequest {
+    RKLogDebug(@"Sending asynchronous %@ request to URL %@.", [self HTTPMethod], [[self URL] absoluteString]);
     [self prepareURLRequest];
-    NSString* body = [[NSString alloc] initWithData:[_URLRequest HTTPBody] encoding:NSUTF8StringEncoding];
-    RKLogDebug(@"Sending %@ request to URL %@. HTTP Body: %@", [self HTTPMethod], [[self URL] absoluteString], body);
-    [body release];        
     
     _isLoading = YES;    
     
@@ -315,17 +335,15 @@
 
 - (RKResponse*)sendSynchronously {
     NSAssert(NO == _isLoading || NO == _isLoaded, @"Cannot send a request that is loading or loaded without resetting it first.");
-	NSURLResponse* URLResponse = nil;
+	NSHTTPURLResponse* URLResponse = nil;
 	NSError* error;
 	NSData* payload = nil;
 	RKResponse* response = nil;
     _sentSynchronously = YES;
 
 	if ([self shouldDispatchRequest]) {
-		[self prepareURLRequest];
-		NSString* body = [[NSString alloc] initWithData:[_URLRequest HTTPBody] encoding:NSUTF8StringEncoding];
-		RKLogDebug(@"Sending synchronous %@ request to URL %@. HTTP Body: %@", [self HTTPMethod], [[self URL] absoluteString], body);
-		[body release];
+		[self prepareURLRequest];        
+		RKLogDebug(@"Sending synchronous %@ request to URL %@.", [self HTTPMethod], [[self URL] absoluteString]);
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:RKRequestSentNotification object:self userInfo:nil];
 

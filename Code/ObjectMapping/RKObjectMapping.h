@@ -37,6 +37,7 @@ relationship. Relationships are processed using an object mapping as well.
     NSString* _rootKeyPath;
     BOOL _setNilForMissingAttributes;
     BOOL _setNilForMissingRelationships;
+    BOOL _forceCollectionMapping;
 }
 
 /**
@@ -87,6 +88,30 @@ relationship. Relationships are processed using an object mapping as well.
 @property (nonatomic, assign) BOOL setNilForMissingRelationships;
 
 /**
+ Forces the mapper to treat the mapped keyPath as a collection even if it does not
+ return an array or a set of objects. This permits mapping where a dictionary identifies
+ a collection of objects.
+ 
+ When enabled, each key/value pair in the resolved dictionary will be mapped as a separate
+ entity. This is useful when you have a JSON structure similar to:
+ 
+     { "users": 
+        { 
+            "blake": { "id": 1234, "email": "blake@restkit.org" },
+            "rachit": { "id": 5678", "email": "rachit@restkit.org" }
+        }
+     }
+ 
+ By enabling forceCollectionMapping, RestKit will map "blake" => attributes and
+ "rachit" => attributes as independent objects. This can be combined with
+ mapKeyOfNestedDictionaryToAttribute: to properly map these sorts of structures.
+ 
+ @default NO
+ @see mapKeyOfNestedDictionaryToAttribute
+ */
+@property (nonatomic, assign) BOOL forceCollectionMapping;
+
+/**
  An array of date format strings to apply when mapping a
  String attribute to a NSDate property. Each format string will be applied
  until the date formatter does not return nil.
@@ -119,6 +144,20 @@ relationship. Relationships are processed using an object mapping as well.
  attribute or relationship in this object mapping.
  */
 - (id)mappingForKeyPath:(NSString*)sourceKeyPath;
+
+/**
+ Returns the attribute mapping targeting the specified attribute on the destination object
+ 
+ @param attributeKey The name of the attribute we want to retrieve the mapping for
+ */
+- (RKObjectAttributeMapping*)mappingForAttribute:(NSString*)attributeKey;
+
+/**
+ Returns the relationship mapping targeting the specified relationship on the destination object
+ 
+ @param relationshipKey The name of the relationship we want to retrieve the mapping for
+ */
+- (RKObjectRelationshipMapping*)mappingForRelationship:(NSString*)relationshipKey;
 
 /**
  Define an attribute mapping for one or more keyPaths where the source keyPath and destination attribute property
@@ -239,6 +278,31 @@ relationship. Relationships are processed using an object mapping as well.
  @param ... A nil-terminated sequence of strings alternating between source key paths and destination attributes
  */
 - (void)mapKeyPathsToAttributes:(NSString*)sourceKeyPath, ... NS_REQUIRES_NIL_TERMINATION;
+
+
+/**
+ Configures a sub-key mapping for cases where JSON has been nested underneath a key named after an attribute.
+ 
+ For example, consider the following JSON:
+ 
+     { "users": 
+        { 
+            "blake": { "id": 1234, "email": "blake@restkit.org" },
+            "rachit": { "id": 5678", "email": "rachit@restkit.org" }
+        }
+     }
+ 
+ We can configure our mappings to handle this in the following form:
+ 
+    RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[User class]];
+    mapping.forceCollectionMapping = YES; // RestKit cannot infer this is a collection, so we force it
+    [mapping mapKeyOfNestedDictionaryToAttribute:@"firstName"];
+    [mapping mapFromKeyPath:@"(firstName).id" toAttribute:"userID"];
+    [mapping mapFromKeyPath:@"(firstName).email" toAttribute:"email"];
+ 
+    [[RKObjectManager sharedManager].mappingProvider setObjectMapping:mapping forKeyPath:@"users"];
+ */
+- (void)mapKeyOfNestedDictionaryToAttribute:(NSString*)attributeName;
 
 /**
  Removes all currently configured attribute and relationship mappings from the object mapping

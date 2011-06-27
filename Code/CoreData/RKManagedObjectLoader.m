@@ -33,6 +33,12 @@
     [super dealloc];
 }
 
+- (void)reset {
+    [super reset]; 
+    [_targetObjectID release];
+    _targetObjectID = nil;
+}
+
 - (RKManagedObjectStore*)objectStore {
     return self.objectManager.objectStore;
 }
@@ -92,7 +98,18 @@
     // If the response was successful, save the store...
     if ([self.response isSuccessful]) {
         // TODO: Logging or delegate notifications?
-        [self.objectStore save];
+        NSError* error = [self.objectStore save];
+        if (error) {
+            RKLogError(@"Failed to save managed object context after mapping completed: %@", [error localizedDescription]);
+            NSMethodSignature* signature = [self.delegate methodSignatureForSelector:@selector(objectLoader:didFailWithError:)];
+            RKManagedObjectThreadSafeInvocation* invocation = [RKManagedObjectThreadSafeInvocation invocationWithMethodSignature:signature];
+            [invocation setTarget:self.delegate];
+            [invocation setSelector:@selector(objectLoader:didFailWithError:)];
+            [invocation setArgument:&self atIndex:2];
+            [invocation setArgument:&error atIndex:3];
+            [invocation invokeOnMainThread];
+            return;
+        }
     }
     
     // TODO: If unsuccessful and we saved the object, remove it from the store so that it is not orphaned
@@ -114,6 +131,22 @@
     }
     
     return nil;    
+}
+
+// Overloaded to handle deleting an object orphaned by a failed postObject:
+- (void)handleResponseError {
+    [super handleResponseError];
+    
+    if (_targetObjectID) {
+        RKLogInfo(@"Error response encountered: Deleting existing managed object with ID: %@", _targetObjectID);
+        NSManagedObject* objectToDelete = [self.objectStore objectWithID:_targetObjectID];
+        if (objectToDelete) {
+            [[self.objectStore managedObjectContext] deleteObject:objectToDelete];
+            [self.objectStore save];
+        } else {
+            RKLogWarning(@"Unable to delete existing managed object with ID: %@. Object not found in the store.", _targetObjectID);
+        }
+    }
 }
 
 @end

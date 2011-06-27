@@ -56,6 +56,12 @@
 	[super dealloc];
 }
 
+- (void)reset {
+    [super reset];
+    [_response release];
+    _response = nil;
+}
+
 #pragma mark - Response Processing
 
 - (void)finalizeLoad:(BOOL)successful {
@@ -139,7 +145,7 @@
         if (error.domain == RKRestKitErrorDomain && error.code == RKObjectMapperErrorUnmappableContent) {
             // If this is a delete request, and the error is an "unmappable content" error, return an empty result
             // because delete requests should allow for no objects to come back in the response (you just deleted the object).
-            result = [[[RKObjectMappingResult alloc] initWithDictionary:[NSDictionary dictionary]] autorelease];
+            result = [RKObjectMappingResult mappingResultWithDictionary:[NSDictionary dictionary]];
         }
     }
     
@@ -158,7 +164,7 @@
     RKObjectMappingProvider* mappingProvider;
     if (self.objectMapping) {
         mappingProvider = [[RKObjectMappingProvider new] autorelease];
-        [mappingProvider setMapping:self.objectMapping forKeyPath:@""];
+        [mappingProvider setObjectMapping:self.objectMapping forKeyPath:@""];
     } else {
         mappingProvider = self.objectManager.mappingProvider;
     }
@@ -191,33 +197,19 @@
 }
 
 - (BOOL)isResponseMappable {
+    if ([self.response isServiceUnavailable]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:RKServiceDidBecomeUnavailableNotification object:self];
+    }
+    
 	if ([self.response isFailure]) {
 		[(NSObject<RKObjectLoaderDelegate>*)_delegate objectLoader:self didFailWithError:self.response.failureError];
         
 		[self finalizeLoad:NO];
         
 		return NO;
-	} else if ([self.response isError]) {
-        
-        if ([self.response isServiceUnavailable]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:RKServiceDidBecomeUnavailableNotification object:self];
-        }
-        
-        // Since we are mapping what we know to be an error response, we don't want to map the result back onto our
-        // target object
-        NSError* error = nil;
-        RKObjectMappingResult* result = [self mapResponseWithMappingProvider:self.objectManager.mappingProvider toObject:nil error:&error];
-        if (result) {
-            error = [result asError];
-        } else {
-            RKLogError(@"Encountered an error while attempting to map server side errors from payload: %@", [error localizedDescription]);
-        }
-        
-        [(NSObject<RKObjectLoaderDelegate>*)_delegate objectLoader:self didFailWithError:error];
-        
-		return NO;
-	} else if ([self.response isSuccessful] && NO == [self canParseMIMEType:[self.response MIMEType]]) {
-        RKLogWarning(@"Encountered unexpected response code: %d (MIME Type: %@)", self.response.statusCode, self.response.MIMEType);
+	} else if (NO == [self canParseMIMEType:[self.response MIMEType]]) {
+        // We can't parse the response, it's unmappable regardless of the status code
+        RKLogWarning(@"Encountered unexpected response with status code: %d (MIME Type: %@)", self.response.statusCode, self.response.MIMEType);
         if ([_delegate respondsToSelector:@selector(objectLoaderDidLoadUnexpectedResponse:)]) {
             [(NSObject<RKObjectLoaderDelegate>*)_delegate objectLoaderDidLoadUnexpectedResponse:self];
         } else {
@@ -228,9 +220,27 @@
         [self finalizeLoad:NO];
         
         return NO;
+    } else if ([self.response isError]) {
+        // This is an error and we can map the MIME Type of the response
+        [self handleResponseError];
+		return NO;
     }
     
 	return YES;
+}
+
+- (void)handleResponseError {
+    // Since we are mapping what we know to be an error response, we don't want to map the result back onto our
+    // target object
+    NSError* error = nil;
+    RKObjectMappingResult* result = [self mapResponseWithMappingProvider:self.objectManager.mappingProvider toObject:nil error:&error];
+    if (result) {
+        error = [result asError];
+    } else {
+        RKLogError(@"Encountered an error while attempting to map server side errors from payload: %@", [error localizedDescription]);
+    }
+    
+    [(NSObject<RKObjectLoaderDelegate>*)_delegate objectLoader:self didFailWithError:error];
 }
 
 #pragma mark - RKRequest & RKRequestDelegate methods

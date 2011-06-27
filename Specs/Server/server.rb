@@ -46,6 +46,12 @@ class RestKit::SpecServer < Sinatra::Base
     {:human => {:name => "My Name", :id => 1, :website => "http://restkit.org/"}}.to_json
   end
   
+  post '/humans/fail' do
+    status 500
+    content_type 'application/json'
+    send_file 'Specs/Server/../Fixtures/JSON/errors.json'
+  end
+  
   get '/humans/1' do
     status 200
     content_type 'application/json'
@@ -63,6 +69,12 @@ class RestKit::SpecServer < Sinatra::Base
     status 200
     content_type 'application/json'
     params.to_json
+  end
+  
+  get '/404' do
+    status 404
+    content_type 'text/html'
+    "File Not Found"
   end
   
   # start the server if ruby file executed directly

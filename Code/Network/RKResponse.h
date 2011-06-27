@@ -71,7 +71,7 @@
 /**
  * Initializes a response object from the results of a synchronous request
  */
-- (id)initWithSynchronousRequest:(RKRequest*)request URLResponse:(NSURLResponse*)URLResponse body:(NSData*)body error:(NSError*)error;
+- (id)initWithSynchronousRequest:(RKRequest*)request URLResponse:(NSHTTPURLResponse*)URLResponse body:(NSData*)body error:(NSError*)error;
 
 /**
  * Return the localized human readable representation of the HTTP Status Code returned
@@ -174,6 +174,16 @@
  * Indicates an HTTP response code of 404
  */
 - (BOOL)isNotFound;
+
+/**
+ * Indicates an HTTP response code of 409
+ */
+- (BOOL)isConflict;
+
+/**
+ * Indicates an HTTP response code of 410
+ */
+- (BOOL)isGone;
 
 /**
  * Indicates an HTTP response code of 422
