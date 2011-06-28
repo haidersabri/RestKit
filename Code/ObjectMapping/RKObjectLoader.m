@@ -131,7 +131,8 @@
     }
     
     if ([self.delegate respondsToSelector:@selector(objectLoader:willMapData:)]) {
-        [(NSObject<RKObjectLoaderDelegate>*)self.delegate objectLoader:self willMapData:parsedData];
+        parsedData = [[parsedData mutableCopy] autorelease];
+        [(NSObject<RKObjectLoaderDelegate>*)self.delegate objectLoader:self willMapData:&parsedData];
     }
     
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:parsedData mappingProvider:mappingProvider];

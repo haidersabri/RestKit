@@ -92,7 +92,7 @@
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "UISPEC_EXAMPLE"
-            value = "itShouldLoadResultsNestedAtAKeyPath"
+            value = "itShouldAllowMutationOfTheParsedDataInWillMapData"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
