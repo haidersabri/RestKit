@@ -161,8 +161,8 @@
     RKObjectMappingResult* result = [mapper performMapping];
     
     if (nil == result && RKRequestMethodDELETE == self.method && [mapper.errors count] == 1) {
-        NSError* error = [mapper.errors objectAtIndex:0];
-        if (error.domain == RKRestKitErrorDomain && error.code == RKObjectMapperErrorUnmappableContent) {
+        NSError* mapperError = [mapper.errors objectAtIndex:0];
+        if (mapperError.domain == RKRestKitErrorDomain && mapperError.code == RKObjectMapperErrorUnmappableContent) {
             // If this is a delete request, and the error is an "unmappable content" error, return an empty result
             // because delete requests should allow for no objects to come back in the response (you just deleted the object).
             result = [RKObjectMappingResult mappingResultWithDictionary:[NSDictionary dictionary]];
