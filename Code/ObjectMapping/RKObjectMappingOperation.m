@@ -64,14 +64,18 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
 	NSDate* date = nil;
 	NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     formatter.timeZone = [NSTimeZone localTimeZone];
-	for (NSString* formatString in self.objectMapping.dateFormatStrings) {
-		[formatter setDateFormat:formatString];
-		date = [formatter dateFromString:string];
-		if (date) {
-			break;
-		}
-	}
-	
+    for (id formatParser in self.objectMapping.dateFormatStrings) {
+        if ([formatParser isKindOfClass:[NSString class]]) {
+            [formatter setDateFormat:formatParser];
+            date = [formatter dateFromString:string];
+        } else if ([formatParser respondsToSelector:@selector(dateFromString:)]) {
+            date = [formatParser dateFromString:string];
+        }
+        if (date) {
+            break;
+        }
+    }
+    	
 	[formatter release];
 	return date;
 }
