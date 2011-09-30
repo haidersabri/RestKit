@@ -301,6 +301,7 @@ NSString * RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPa
 #if NS_BLOCKS_AVAILABLE
 - (RKRequest *)requestWithResourcePath:(NSString *)resourcePath completion:(RKRequestCompletionBlock)completion {
 	RKRequest *request = [[RKRequest alloc] initWithURL:[self URLForResourcePath:resourcePath] delegate:nil];
+    [self setupRequest:request];
 	request.completion = completion;
 	[request autorelease];
     
