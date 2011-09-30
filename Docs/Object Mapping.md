@@ -806,8 +806,8 @@ RKObjectRelationshipMapping* articleCommentsMapping = [RKObjectRelationshipMappi
 
 ### Configuring a Core Data Object Mapping
 ```objc
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData/CoreData.h>
+/#import <RestKit/RestKit.h>
+/#import <RestKit/CoreData/CoreData.h>
 RKObjectManager* objectManager = [RKObjectManager managerWithBaseURL:@"http://restkit.org"];
 RKManagedObjectStore* objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:@"MyApp.sqlite"];
 objectManager.objectStore = objectStore;
