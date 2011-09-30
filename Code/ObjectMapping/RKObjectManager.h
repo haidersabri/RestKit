@@ -402,6 +402,14 @@ typedef enum {
  */
 - (RKObjectLoader*)objectLoaderWithResourcePath:(NSString*)resourcePath delegate:(id<RKObjectLoaderDelegate>)delegate;
 
+#if NS_BLOCKS_AVAILABLE
+/**
+ Block version of - (RKObjectLoader*)objectLoaderWithResourcePath:(NSString*)resourcePath delegate:(id<RKObjectLoaderDelegate>)delegate;
+ */
+
+- (RKObjectLoader*)objectLoaderWithResourcePath:(NSString*)resourcePath completion:(RKObjectLoaderCompletion)completion;
+
+#endif
 /**
  Returns an object loader configured for transmitting an object instance across the wire. A request will be constructed
  for you with the resource path configured for you by the Router. This is the best place to
@@ -412,5 +420,14 @@ typedef enum {
  // TODO: Cleanup this comment
  */
 - (RKObjectLoader*)objectLoaderForObject:(id<NSObject>)object method:(RKRequestMethod)method delegate:(id<RKObjectLoaderDelegate>)delegate;
+
+#if NS_BLOCKS_AVAILABLE
+/**
+ Block version of - (RKObjectLoader*)objectLoaderForObject:(id<NSObject>)object method:(RKRequestMethod)method delegate:(id<RKObjectLoaderDelegate>)delegate
+ */
+- (RKObjectLoader*)objectLoaderForObject:(id<NSObject>)object method:(RKRequestMethod)method  completion:(RKObjectLoaderCompletion)completion;
+
+#endif
+
 
 @end

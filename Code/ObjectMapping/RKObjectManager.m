@@ -149,6 +149,18 @@ static RKObjectManager* sharedManager = nil;
 	return objectLoader;
 }
 
+- (RKObjectLoader*)objectLoaderWithResourcePath:(NSString*)resourcePath completion:(RKObjectLoaderCompletion)completion{
+    RKObjectLoader* objectLoader = nil;
+    Class managedObjectLoaderClass = NSClassFromString(@"RKManagedObjectLoader");
+    if (self.objectStore && managedObjectLoaderClass) {
+        objectLoader = [managedObjectLoaderClass loaderWithResourcePath:resourcePath objectManager:self completion:completion];
+    } else {
+        objectLoader = [RKObjectLoader loaderWithResourcePath:resourcePath objectManager:self completion:completion];
+    }	
+    
+	return objectLoader;
+}
+
 - (RKObjectLoader*)loadObjectsAtResourcePath:(NSString*)resourcePath delegate:(id<RKObjectLoaderDelegate>)delegate {
 	RKObjectLoader* loader = [self objectLoaderWithResourcePath:resourcePath delegate:delegate];
 	loader.method = RKRequestMethodGET;
@@ -212,6 +224,26 @@ static RKObjectManager* sharedManager = nil;
 
 	return loader;
 }
+
+#if NS_BLOCKS_AVAILABLE
+- (RKObjectLoader*)objectLoaderForObject:(id<NSObject>)object method:(RKRequestMethod)method  completion:(RKObjectLoaderCompletion)completion{
+    NSString* resourcePath = [self.router resourcePathForObject:object method:method];
+    RKObjectLoader* loader = [self objectLoaderWithResourcePath:resourcePath completion:completion];
+    loader.method = method;
+    loader.sourceObject = object;
+    loader.targetObject = object;
+    loader.serializationMIMEType = self.serializationMIMEType;
+    loader.serializationMapping = [self.mappingProvider serializationMappingForClass:[object class]];
+    
+    if (self.inferMappingsFromObjectTypes) {
+        RKObjectMapping* objectMapping = [self.mappingProvider objectMappingForClass:[object class]];
+        RKLogDebug(@"Auto-selected object mapping %@ for object of type %@", objectMapping, NSStringFromClass([object class]));
+        loader.objectMapping = objectMapping;
+    }
+    
+	return loader;
+}
+#endif
 
 - (RKObjectLoader*)getObject:(id<NSObject>)object delegate:(id<RKObjectLoaderDelegate>)delegate {
 	RKObjectLoader* loader = [self objectLoaderForObject:object method:RKRequestMethodGET delegate:delegate];

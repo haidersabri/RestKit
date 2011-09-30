@@ -70,7 +70,6 @@ RKObjectMapping* articleMapping = [RKObjectMapping mappingForClass:[Article clas
 [articleMapping mapKeyPath:@"body" toAttribute:@"body"];
 [articleMapping mapKeyPath:@"author" toAttribute:@"author"];
 [articleMapping mapKeyPath:@"publication_date" toAttribute:@"publicationDate"];
-
 [[RKObjectManager sharedManager].mappingProvider setMapping:articleMapping forKeyPath:@"articles"];
 ```
 
@@ -85,7 +84,6 @@ Now that we have configured our object mapping, we can load this collection:
 - (void)loadArticles {
     [[RKObjectManager sharedManager] loadObjectsAtResourcePath:@"/articles" delegate:self];
 }
-
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
     RKLogInfo(@"Load collection of Articles: %@", objects);
 }
@@ -111,7 +109,6 @@ means that we would generate two object mapping operations:
   "author": "Blake Watters",
   "publication_date": "7/4/2011"
 }
-
 // This dictionary will be processed in another mapping operation
 { "title": "RestKit 1.0 Released",
   "body": "RestKit 1.0 has been released to much fanfare across the galaxy...",
@@ -259,17 +256,14 @@ Now we just need to configure RestKit to map the data appropriately. Let's exten
 RKObjectMapping* authorMapping = [RKObjectMapping mappingForClass:[Author class]];
 // NOTE: When your source and destination key paths are symmetrical, you can use mapAttributes: as a shortcut
 [authorMapping mapAttributes:@"name", @"email", nil];
-
 // Now configure the Article mapping
 RKObjectMapping* articleMapping = [RKObjectMapping mappingForClass:[Article class]];
 [articleMapping mapKeyPath:@"title" toAttribute:@"title"];
 [articleMapping mapKeyPath:@"body" toAttribute:@"body"];
 [articleMapping mapKeyPath:@"author" toAttribute:@"author"];
 [articleMapping mapKeyPath:@"publication_date" toAttribute:@"publicationDate"];
-
 // Define the relationship mapping
 [article mapKeyPath:@"author" toRelationship:@"author" withMapping:authorMapping];
-
 [[RKObjectManager sharedManager].mappingProvider setMapping:articleMapping forKeyPath:@"articles"];
 ```
 
@@ -294,7 +288,6 @@ options for configuring serialization that are best understood through code:
 // Configure a serialization mapping for our Article class. We want to send back title, body, and publicationDate
 RKObjectMapping* articleSerializationMapping = [RKObjectMapping mappingForClass:[NSMutableDictionary class]];
 [articleSerializationMapping mapAttributes:@"name", @"body", @"publicationDate", nil];
-
 // Now register the mapping with the provider
 [[RKObjectManager sharedManager].mappingProvider setSerializationMapping:articleSerializationMapping forClass:[Article class]];
 ```
@@ -351,7 +344,6 @@ RKObjectMapping* articleMapping = [RKObjectMapping mappingForClass:[Article clas
 [articleMapping mapKeyPath:@"body" toAttribute:@"body"];
 [articleMapping mapKeyPath:@"author" toAttribute:@"author"];
 [articleMapping mapKeyPath:@"publication_date" toAttribute:@"publicationDate"];
-
 // Build a serialization mapping by inverting our object mapping. Includes attributes and relationships
 RKObjectMapping* articleSerializationMapping = [articleMapping inverseMapping];
 // You can customize the mapping here as necessary -- adding/removing mappings
@@ -389,7 +381,6 @@ RKObjectMapping* articleMapping = [RKObjectMapping mappingForClass:[Article clas
 [articleMapping mapKeyPath:@"body" toAttribute:@"body"];
 [articleMapping mapKeyPath:@"author" toAttribute:@"author"];
 [articleMapping mapKeyPath:@"publication_date" toAttribute:@"publicationDate"];
-
 [[RKObjectManager sharedManager].mappingProvider addObjectMapping:articleMapping];
 ```
 
@@ -402,7 +393,6 @@ we'd load this array of `Article` objects:
     RKObjectMapping* articleMapping = [[RKObjectManager sharedManager].mappingProvider objectMappingForClass:[Article class]];
     [[RKObjectManager sharedManager] loadObjectsAtResourcePath:@"/articles" objectMapping:articleMapping delegate:self];
 }
-
 - (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
     RKLogInfo(@"Load collection of Articles: %@", objects);
 }
@@ -428,11 +418,11 @@ We have configured a serialization mapping for the object and want to fetch our 
     query.searchTerm = @"Monkey";
     query.pageNumber = [NSNumber numberWithInt:5];
     query.yearPublished = [NSNumber numberWithInt:2011];
-    
     RKObjectMapping* articleMapping = [[RKObjectManager sharedManager].mappingProvider objectMappingForClass:[Article class]];
     [[RKObjectManager sharedManager] postObject:query mapResponseWith:articleMapping delegate:self];
 }
 ```
+
 One inconvenience of working with non-KVC data is that RestKit is completely unable to automatically infer the appropriate mappings for you. If you
 happen to be working with data where you post/put an object and receive the same object back, you can instruct RestKit to automatically select the
 appropriate object mapping for you:
@@ -460,9 +450,8 @@ The object store is a RestKit component that handles the details of setting of a
 take a look at how this works:
 
 ```objc
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData/CoreData.h>
-
+\# import <RestKit/RestKit.h>
+\# import <RestKit/CoreData/CoreData.h>
 RKObjectManager* objectManager = [RKObjectManager managerWithBaseURL:@"http://restkit.org"];
 RKManagedObjectStore* objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:@"MyApp.sqlite"];
 objectManager.objectStore = objectStore;
@@ -480,7 +469,6 @@ interface & implementation, then configure a managed object mapping:
     @property (nonatomic, retain) NSString* body;
     @property (nonatomic, retain) NSDate*   publicationDate;
 @end
-
 @implementation Article
 // We use @dynamic for the properties in Core Data
 @dynamic title;
@@ -488,7 +476,6 @@ interface & implementation, then configure a managed object mapping:
 @dynamic author;
 @dynamic publicationDate;
 @end
-
 // Now for the object mappings
 RKManagedObjectMapping* articleMapping = [RKManagedObjectMapping objectMappingForClass:[Article class]];
 [articleMapping mapKeyPath:@"id" toAttribute:@"articleID"];
@@ -648,17 +635,13 @@ RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
 RKObjectDynamicMapping* dynamicMapping = [RKObjectDynamicMapping dynamicMapping];
 [boyMapping mapKeyPath:@"friends" toRelationship:@"friends" withMapping:dynamicMapping];
 [girlMapping mapKeyPath:@"friends" toRelationship:@"friends" withMapping:dynamicMapping];
-
 // Connect our mapping to RestKit's mapping provider
 [[RKObjectManager sharedManager].mappingProvider setMapping:dynamicMapping forKeyPath:@"people"];
-
 // Configure the dynamic mapping via matchers
 [dynamicMapping setObjectMapping:boyMapping whenValueOfKeyPath:@"type" isEqualTo:@"Boy"];
 [dynamicMapping setObjectMapping:girlMapping whenValueOfKeyPath:@"type" isEqualTo:@"Girl"];
-
 // Configure the dynamic mapping via a delegate
 dynamicMapping.delegate = self;
-
 - (RKObjectMapping*)objectMappingForData:(id)data {
     // Dynamically construct an object mapping for the data
     if ([[data valueForKey:@"type"] isEqualToString:@"Girl"]) {
@@ -670,10 +653,8 @@ dynamicMapping.delegate = self;
             [mapping mapAttributes:@"name", nil];
         }];
     }
-    
     return nil;
 }
-
 // Configure the dynamic mapping via a block
 dynamicMapping.objectMappingForDataBlock = ^ RKObjectMapping* (id mappableData) {
     if ([[mappableData valueForKey:@"type"] isEqualToString:@"Boy"]) {
@@ -681,7 +662,6 @@ dynamicMapping.objectMappingForDataBlock = ^ RKObjectMapping* (id mappableData) 
     } else if ([[mappableData valueForKey:@"type"] isEqualToString:@"Girl"]) {
         return girlMapping;
     }
-    
     return nil;
 };
 ```
@@ -718,23 +698,19 @@ Let's take a look at how you can leverage key-value validation to perform the ab
     *iovalue = [(NSString*)iovalue uppercaseString];
     return YES;
 }
-
 - (BOOL)validateArticleID:(id *)ioValue error:(NSError **)outError {
     // Reject an article ID of zero. By returning NO, we refused the assignment and the value will not be set
     if ([(NSNumber*)ioValue intValue] == 0) {
         return NO;
     }
-    
     return YES;
 }
- 
 - (BOOL)validateBody:(id *)ioValue error:(NSError **)outError {
     // If the body is blank, return NO and fail out the operation.
     if ([(NSString*)ioValue length] == 0) {
         *outError = [NSError errorWithDomain:RKRestKitErrorDomain code:RKObjectMapperErrorUnmappableContent userInfo:nil];
         return NO;
     }
-    
     return YES;
 }
 @end
@@ -808,27 +784,22 @@ of the parser classes is utilized to configure the registry appropriately. For J
 ```objc
 // In this use-case Article is a vanilla NSObject with properties
 RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[Article class]];
-
 // Add an attribute mapping to the object mapping directly
 RKObjectAttributeMapping* titleMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"title" toKeyPath:@"title"];
 [mapping addAttributeMapping:titleMapping];
-
 // Configure attribute mappings using helper methods
 [mapping mapAttributes:@"title", @"body", nil]; // Define mappings where the keyPath and target attribute have the same name
 [mapping mapKeyPath:@"created_at" toAttribute:@"createdAt"]; // Map a differing keyPath and attribute
 [mapping mapKeyPathsToAttributes:@"some.keyPath", @"targetAttribute1", @"another.keyPath", @"targetAttribute2", nil];
-
 // Configure relationship mappings
 RKObjectMapping* commentMapping = [[RKObjectManager sharedManager] objectMappingForClass:[Comment class]];
 // Direct configuration of instances
 RKObjectRelationshipMapping* articleCommentsMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"comments" toKeyPath:@"comments" withMapping:commentMapping];
 [mapping addRelationshipMapping:articleCommentsMapping];
-
 // Configuration using helper methods
 [mapping mapRelationship:@"comments" withMapping:commentMapping];
 [mapping hasMany:@"comments" withMapping:commentMapping];
 [mapping belongsTo:@"user" withMapping:userMapping];    
-
 // Register the mapping with the object manager
 [objectManager.mappingProvider setMapping:mapping forKeyPath:@"article"];
 ```
@@ -837,11 +808,9 @@ RKObjectRelationshipMapping* articleCommentsMapping = [RKObjectRelationshipMappi
 ```objc
 #import <RestKit/RestKit.h>
 #import <RestKit/CoreData/CoreData.h>
-
 RKObjectManager* objectManager = [RKObjectManager managerWithBaseURL:@"http://restkit.org"];
 RKManagedObjectStore* objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:@"MyApp.sqlite"];
 objectManager.objectStore = objectStore;
-
 RKManagedObjectMapping* articleMapping = [RKManagedObjectMapping objectMappingForClass:[Article class]];
 [articleMapping mapKeyPath:@"id" toAttribute:@"articleID"];
 [articleMapping mapKeyPath:@"title" toAttribute:@"title"];
@@ -856,9 +825,7 @@ RKObjectManager* objectManager = [RKObjectManager managerWithBaseURL:@"http://re
 RKManagedObjectMapping* articleMapping = [RKObjectMapping objectMappingForClass:[Article class]];
 [articleMapping mapKeyPath:@"id" toAttribute:@"articleID"];
 [objectManager.mappingProvider setMapping:articleMapping forKeyPath:@"articles"];
-
 RKObjectLoader* loader = [RKObjectManager loadObjectsAtResourcePath:@"/articles" delegate:self];
-
 /**
  The object mapper will try to determine the mappings by examining keyPaths in the loaded payload. If 
  the payload contains a dictionary with data at the 'articles' key, it will be mapped
@@ -898,19 +865,14 @@ This is handled for you when using postObject and putObject, presented here for 
 RKUser* user = [User new];
 user.firstName = @"Blake";
 user.lastName = @"Watters";
-
 RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[NSDictionary class]];
 [mapping mapAttributes:@"firstName", @"lastName", nil];
-
 RKObjectSerializer* serializer = [RKObjectSerializer serializerWithObject:object mapping:serializationMapping];
 NSError* error = nil;
-
 // Turn an object into a dictionary
 NSMutableDictionary* dictionary = [serializer serializedObject:&error];
-
 // Serialize the object to JSON
 NSString* JSON = [serializer serializedObjectForMIMEType:RKMIMETypeJSON error:&error];
-
 // Turn it into a RKRequestSerializable
 id<RKRequestSerializable>serializable = [serializer serializationForMIMEType:RKMIMETypeJSON error:&error];
 ```
@@ -927,7 +889,6 @@ id parsedData = [parser objectFromString:JSONString error:error];
 if (parsedData == nil && error) {
     // Parser error...
 }
-
 RKObjectMappingProvider* mappingProvider = [RKObjectManager sharedManager].mappingProvider;
 RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:parsedData mappingProvider:mappingProvider];
 RKObjectMappingResult* result = [mapper performMapping];
