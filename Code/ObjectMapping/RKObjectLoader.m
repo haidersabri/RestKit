@@ -136,16 +136,17 @@
                                                             object:self 
                                                           userInfo:userInfo];
 	} else {
+#if NS_BLOCKS_AVAILABLE
+        if (self.objectLoaderCompletion) {
+            self.objectLoaderCompletion(self, nil, error);
+        }
+#endif
         NSDictionary* userInfo = [NSDictionary dictionaryWithObject:(error ? error : (NSError*)[NSNull null])
                                                              forKey:RKRequestDidFailWithErrorNotificationUserInfoErrorKey];
 		[[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFailWithErrorNotification
 															object:self
 														  userInfo:userInfo];
-        #if NS_BLOCKS_AVAILABLE
-        if (self.objectLoaderCompletion) {
-            self.objectLoaderCompletion(self, nil, error);
-        }
-        #endif
+       
 	}
 }
 
@@ -409,6 +410,7 @@
             _result = [[self performMapping:&error] retain];
             if (self.result) {
                 [self processMappingResult:self.result];
+               // [self performSelectorInBackground:@selector(processMappingResult:) withObject:self.result];
             } else {
                 [self performSelectorInBackground:@selector(didFailLoadWithError:) withObject:error];
             }
