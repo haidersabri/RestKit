@@ -2490,6 +2490,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserNXJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2511,6 +2512,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserNXJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -2532,6 +2534,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserNXJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/NXJSON;
+				SKIP_INSTALL = YES;
 			};
 			name = Distribution;
 		};
@@ -2558,6 +2561,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Three20/Private;
 				PRODUCT_NAME = RestKitThree20;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Three20;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -2586,6 +2590,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Three20/Private;
 				PRODUCT_NAME = RestKitThree20;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Three20;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv6 armv7 i386";
 				ZERO_LINK = NO;
@@ -2623,6 +2628,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Network/Private;
 				PRODUCT_NAME = RestKitNetwork;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Network;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2638,6 +2644,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping/Private;
 				PRODUCT_NAME = RestKitObjectMapping;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2653,6 +2660,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/Private;
 				PRODUCT_NAME = RestKitSupport;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2674,6 +2682,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL/Private;
 				PRODUCT_NAME = RestKitJSONParserYAJL;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL;
+				SKIP_INSTALL = YES;
 				YAJL_GENERAL_OTHER_CFLAGS = "-Wdiv-by-zero -Wbad-function-cast -Wnested-externs -Wold-style-definition";
 				ZERO_LINK = NO;
 			};
@@ -2693,6 +2702,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserSBJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2710,6 +2720,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit/Private;
 				PRODUCT_NAME = RestKitJSONParserJSONKit;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2724,6 +2735,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/CoreData/Private;
 				PRODUCT_NAME = RestKitCoreData;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/CoreData;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Distribution;
@@ -2750,6 +2762,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Three20/Private;
 				PRODUCT_NAME = RestKitThree20;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Three20;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv6 armv7 i386";
 				ZERO_LINK = NO;
@@ -2813,6 +2826,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Network/Private;
 				PRODUCT_NAME = RestKitNetwork;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Network;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2827,6 +2841,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Network/Private;
 				PRODUCT_NAME = RestKitNetwork;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Network;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2843,6 +2858,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping/Private;
 				PRODUCT_NAME = RestKitObjectMapping;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2857,6 +2873,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping/Private;
 				PRODUCT_NAME = RestKitObjectMapping;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2873,6 +2890,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/Private;
 				PRODUCT_NAME = RestKitSupport;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2887,6 +2905,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/Private;
 				PRODUCT_NAME = RestKitSupport;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2902,6 +2921,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/CoreData/Private;
 				PRODUCT_NAME = RestKitCoreData;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/CoreData;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -2915,6 +2935,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/CoreData/Private;
 				PRODUCT_NAME = RestKitCoreData;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/CoreData;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2944,7 +2965,7 @@
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 			};
 			name = "Ad Hoc";
@@ -2960,6 +2981,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Network/Private;
 				PRODUCT_NAME = RestKitNetwork;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Network;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -2975,6 +2997,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping/Private;
 				PRODUCT_NAME = RestKitObjectMapping;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/ObjectMapping;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -2990,6 +3013,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/Private;
 				PRODUCT_NAME = RestKitSupport;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -3011,6 +3035,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL/Private;
 				PRODUCT_NAME = RestKitJSONParserYAJL;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL;
+				SKIP_INSTALL = YES;
 				YAJL_GENERAL_OTHER_CFLAGS = "-Wdiv-by-zero -Wbad-function-cast -Wnested-externs -Wold-style-definition";
 				ZERO_LINK = NO;
 			};
@@ -3030,6 +3055,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserSBJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -3047,6 +3073,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit/Private;
 				PRODUCT_NAME = RestKitJSONParserJSONKit;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -3064,6 +3091,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML/Private;
 				PRODUCT_NAME = RestKitXMLParserLibxml;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML;
+				SKIP_INSTALL = YES;
 			};
 			name = "Ad Hoc";
 		};
@@ -3077,6 +3105,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/CoreData/Private;
 				PRODUCT_NAME = RestKitCoreData;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/CoreData;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = "Ad Hoc";
@@ -3103,6 +3132,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Three20/Private;
 				PRODUCT_NAME = RestKitThree20;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Three20;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALID_ARCHS = "armv6 armv7 i386";
 				ZERO_LINK = NO;
@@ -3159,7 +3189,7 @@
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 			};
 			name = Debug;
@@ -3169,7 +3199,7 @@
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 			};
 			name = Release;
@@ -3179,7 +3209,7 @@
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = NO;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 			};
 			name = Distribution;
@@ -3202,6 +3232,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL/Private;
 				PRODUCT_NAME = RestKitJSONParserYAJL;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL;
+				SKIP_INSTALL = YES;
 				YAJL_GENERAL_OTHER_CFLAGS = "-Wdiv-by-zero -Wbad-function-cast -Wnested-externs -Wold-style-definition";
 			};
 			name = Debug;
@@ -3223,6 +3254,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL/Private;
 				PRODUCT_NAME = RestKitJSONParserYAJL;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/YAJL;
+				SKIP_INSTALL = YES;
 				YAJL_GENERAL_OTHER_CFLAGS = "-Wdiv-by-zero -Wbad-function-cast -Wnested-externs -Wold-style-definition";
 				ZERO_LINK = NO;
 			};
@@ -3243,6 +3275,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserSBJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3260,6 +3293,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON/Private;
 				PRODUCT_NAME = RestKitJSONParserSBJSON;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/SBJSON;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3278,6 +3312,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML/Private;
 				PRODUCT_NAME = RestKitXMLParserLibxml;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3294,6 +3329,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML/Private;
 				PRODUCT_NAME = RestKitXMLParserLibxml;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -3310,6 +3346,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML/Private;
 				PRODUCT_NAME = RestKitXMLParserLibxml;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/XML/LibXML;
+				SKIP_INSTALL = YES;
 			};
 			name = Distribution;
 		};
@@ -3419,6 +3456,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit/Private;
 				PRODUCT_NAME = RestKitJSONParserJSONKit;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3435,6 +3473,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit/Private;
 				PRODUCT_NAME = RestKitJSONParserJSONKit;
 				PUBLIC_HEADERS_FOLDER_PATH = include/RestKit/Support/JSON/JSONKit;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
