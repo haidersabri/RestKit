@@ -80,6 +80,16 @@
 }
 #endif
 
+-(void)cancel{
+    [super cancel];
+#if NS_BLOCKS_AVAILABLE    
+    if(self.objectLoaderCompletion){
+        self.objectLoaderCompletion(self, nil, nil);
+    }
+    self.objectLoaderCompletion = nil;
+#endif
+}
+
 - (void)dealloc {
     // Weak reference
     _objectManager = nil;

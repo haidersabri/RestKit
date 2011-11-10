@@ -322,6 +322,9 @@
 	_connection = nil;
 	_isLoading = NO;
 #if NS_BLOCKS_AVAILABLE
+    if (self.completion) {
+        self.completion(nil, nil);
+    }
     self.completion = nil;
 #endif
     
