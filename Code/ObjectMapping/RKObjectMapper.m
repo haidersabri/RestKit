@@ -101,7 +101,7 @@
     
     if ([object respondsToSelector:@selector(countForObject:)] && [object count] > 0) {        
         if ([object countForObject:[NSNull null]] == [object count]) {
-            RKLogWarning(@"Found a collection containing only NSNull values, considering the collection unmappable...");
+            RKLogDebug(@"Found a collection containing only NSNull values, considering the collection unmappable...");
             return YES;
         }
     }
@@ -305,7 +305,7 @@
     }
     
     // Allow any queued operations to complete
-    NSLog(@"The following operations are in the queue: %@", _operationQueue.operations);
+    RKLogDebug(@"The following operations are in the queue: %@", _operationQueue.operations);
     [_operationQueue waitUntilAllOperationsAreFinished];
     
     if ([self.delegate respondsToSelector:@selector(objectMapperDidFinishMapping:)]) {

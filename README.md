@@ -73,7 +73,7 @@ Quick Start (aka TL;DR)
 1. Link against required frameworks:
     1. **CFNetwork.framework**
     1. **CoreData.framework**
-    1. **MobileCoreServices.framework**
+    1. **MobileCoreServices.framework** on iOS or **CoreServices.framework** on OS X
     1. **SystemConfiguration.framework**
     1. **libxml2.dylib**
 1. Link against RestKit static library products:
@@ -89,15 +89,29 @@ Visual Install Guide
 
 An step-by-step visual install guide for Xcode 4.x is available on the RestKit Wiki: https://github.com/RestKit/RestKit/wiki/Installing-RestKit-in-Xcode-4.x
 
-Contributing
+Community Resources
 -------------------------
 
-Forks, patches and other feedback are always welcome. 
+A Google Group (high traffic) for development discussions and user support is available at: [http://groups.google.com/group/restkit](http://groups.google.com/group/restkit)
 
-A Google Group for development and usage of library is available at: [http://groups.google.com/group/restkit](http://groups.google.com/group/restkit)
+For users interested in low traffic updates about the library, an announcements list is also available:
+[http://groups.google.com/group/restkit-announce](http://groups.google.com/group/restkit-announce)
 
 Follow RestKit on Twitter:[http://twitter.com/restkit](http://twitter.com/restkit)
 
-### RestKit is brought to you by [Two Toasters](http://www.twotoasters.com/). ###
+Contributing
+-------------------------
+
+Forks, patches and other feedback are always welcome.
+
+Credits
+-------------------------
+
+RestKit is brought to you by [Blake Watters](http://twitter.com/blakewatters) and the RestKit team.
+
+Support is provided by the following organizations:
+
+* [GateGuru](http://www.gateguruapp.com/)
+* [Two Toasters](http://www.twotoasters.com/)
 
 [Object Mapping Design Document]: https://github.com/RestKit/RestKit/blob/master/Docs/Object%20Mapping.md

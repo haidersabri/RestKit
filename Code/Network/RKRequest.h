@@ -89,7 +89,7 @@ typedef enum {
     RKRequestAuthenticationTypeOAuth2        // Enable the use of OAuth 2.0 authentication
 } RKRequestAuthenticationType;
 
-@class RKResponse, RKRequestQueue;
+@class RKResponse, RKRequestQueue, RKReachabilityObserver;
 @protocol RKRequestDelegate;
 
 #if NS_BLOCKS_AVAILABLE
@@ -125,6 +125,7 @@ typedef void (^RKRequestCompletionBlock)(RKResponse *response, NSError *error);
     RKRequestCache *_cache;
     NSTimeInterval _cacheTimeoutInterval;
     RKRequestQueue *_queue;
+    RKReachabilityObserver *_reachabilityObserver;
     
     #if TARGET_OS_IPHONE
     RKRequestBackgroundPolicy _backgroundPolicy;
@@ -197,9 +198,19 @@ typedef void (^RKRequestCompletionBlock)(RKResponse *response, NSError *error);
 @property(nonatomic, readonly) UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 #endif
 
+
 #if NS_BLOCKS_AVAILABLE
 @property (nonatomic, copy) RKRequestCompletionBlock completion;
 #endif
+
+
+/**
+ The reachability observer to consult for network status. Used for performing
+ offline cache loads.
+ 
+ Generally configured by the RKClient instance that minted this request
+ */
+@property (nonatomic, assign) RKReachabilityObserver *reachabilityObserver;
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -467,6 +478,11 @@ typedef void (^RKRequestCompletionBlock)(RKResponse *response, NSError *error);
  * Sent when a request has uploaded data to the remote site
  */
 - (void)request:(RKRequest *)request didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
+
+/**
+ * Sent when request has received data from remote site
+ */
+- (void)request:(RKRequest*)request didReceivedData:(NSInteger)bytesReceived totalBytesReceived:(NSInteger)totalBytesReceived totalBytesExectedToReceive:(NSInteger)totalBytesExpectedToReceive;
 
 /**
  * Sent to the delegate when a request was cancelled

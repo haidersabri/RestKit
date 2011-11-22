@@ -20,7 +20,6 @@
 
 #import "RKResponse.h"
 #import "RKNotifications.h"
-#import "RKNetwork.h"
 #import "RKLog.h"
 #import "RKParserRegistry.h"
 #import "RKClient.h"
@@ -151,7 +150,7 @@ extern NSString* cacheURLKey;
 		NSURLCredential *newCredential;
 		newCredential=[NSURLCredential credentialWithUser:[NSString stringWithFormat:@"%@", _request.username]
 		                                         password:[NSString stringWithFormat:@"%@", _request.password]
-		                                      persistence:RKNetworkGetGlobalCredentialPersistence()];
+                                              persistence:NSURLCredentialPersistenceNone];
 		[[challenge sender] useCredential:newCredential
 		       forAuthenticationChallenge:challenge];
 	} else {
@@ -188,6 +187,9 @@ extern NSString* cacheURLKey;
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	[_body appendData:data];
+    if ([[_request delegate] respondsToSelector:@selector(request:didReceivedData:totalBytesReceived:totalBytesExectedToReceive:)]) {
+        [[_request delegate] request:_request didReceivedData:[data length] totalBytesReceived:[_body length] totalBytesExectedToReceive:_httpURLResponse.expectedContentLength];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response {	
@@ -243,9 +245,15 @@ extern NSString* cacheURLKey;
 
 - (id)parsedBody:(NSError**)error {
     id<RKParser> parser = [[RKParserRegistry sharedRegistry] parserForMIMEType:[self MIMEType]];
+    if (! parser) {
+        RKLogWarning(@"Unable to parse response body: no parser registered for MIME Type '%@'", [self MIMEType]);
+        return nil;
+    }
     id object = [parser objectFromString:[self bodyAsString] error:error];
     if (object == nil) {
-        RKLogError(@"Unable to parse response body: %@", [*error localizedDescription]);
+        if (*error) {
+            RKLogError(@"Unable to parse response body: %@", [*error localizedDescription]);
+        }
         return nil;
     }
     return object;

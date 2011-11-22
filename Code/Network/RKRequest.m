@@ -3,7 +3,7 @@
 //  RestKit
 //
 //  Created by Jeremy Ellison on 7/27/09.
-//  Copyright 2009 Two Toasters
+//  Copyright 2009 RestKit
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -22,22 +22,24 @@
 #import "RKResponse.h"
 #import "NSDictionary+RKRequestSerialization.h"
 #import "RKNotifications.h"
-#import "RKClient.h"
 #import "../Support/Support.h"
 #import "RKURL.h"
 #import "NSData+MD5.h"
 #import "NSString+MD5.h"
 #import "RKLog.h"
 #import "RKRequestCache.h"
-#import "TDOAuth.h"
-
+#import "GCOAuth.h"
+#import "NSURL+RestKit.h"
+#import "RKReachabilityObserver.h"
+#import "RKRequestQueue.h"
+#import "RKParams.h"
 
 // Set Logging Component
 #undef RKLogComponent
 #define RKLogComponent lcl_cRestKitNetwork
 
 @implementation RKRequest
-@class TDOAuth;
+@class GCOAuth;
 
 @synthesize URL = _URL;
 @synthesize URLRequest = _URLRequest;
@@ -59,6 +61,7 @@
 @synthesize OAuth2AccessToken = _OAuth2AccessToken;
 @synthesize OAuth2RefreshToken = _OAuth2RefreshToken;
 @synthesize queue = _queue;
+@synthesize reachabilityObserver = _reachabilityObserver;
 
 #if TARGET_OS_IPHONE
 @synthesize backgroundPolicy = _backgroundPolicy, backgroundTaskIdentifier = _backgroundTaskIdentifier;
@@ -236,7 +239,7 @@
 }
 
 - (void)addHeadersToRequest {
-	NSString* header;
+	NSString *header = nil;
 	for (header in _additionalHTTPHeaders) {
 		[_URLRequest setValue:[_additionalHTTPHeaders valueForKey:header] forHTTPHeaderField:header];
 	}
@@ -268,29 +271,50 @@
     
     // Add OAuth headers if is need it
     // OAuth 1
-    if(self.authenticationType == RKRequestAuthenticationTypeOAuth1){
-        NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-        for(NSString *parameter in [[_URL query] componentsSeparatedByString:@"&"]) {
-            NSArray *keyValuePair = [parameter componentsSeparatedByString:@"="];
-            [parameters setValue:[[keyValuePair objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
-                          forKey:[keyValuePair objectAtIndex:0]];
-        }
+    if(self.authenticationType == RKRequestAuthenticationTypeOAuth1){        
+        NSURLRequest *echo = nil;
         
-        NSURLRequest *echo = [TDOAuth URLRequestForPath:[self resourcePath]
-                                          GETParameters:parameters
-                                                 scheme:[_URL scheme]
-                                                   host:[_URL host]
-                                            consumerKey:self.OAuth1ConsumerKey
-                                         consumerSecret:self.OAuth1ConsumerSecret
-                                            accessToken:self.OAuth1AccessToken
-                                            tokenSecret:self.OAuth1AccessTokenSecret];
+        // use the suitable parameters dict
+        NSDictionary *parameters = nil;
+        if ([self.params isKindOfClass:[RKParams class]])
+            parameters = [(RKParams *)self.params dictionaryOfPlainTextParams];
+        else 
+            parameters = [_URL queryDictionary];
+            
+        if (self.method == RKRequestMethodPUT)
+            echo = [GCOAuth URLRequestForPath:[_URL path]
+                                PUTParameters:parameters
+                                       scheme:[_URL scheme]
+                                         host:[_URL host]
+                                  consumerKey:self.OAuth1ConsumerKey
+                               consumerSecret:self.OAuth1ConsumerSecret
+                                  accessToken:self.OAuth1AccessToken
+                                  tokenSecret:self.OAuth1AccessTokenSecret];
+        else if (self.method == RKRequestMethodPOST)
+            echo = [GCOAuth URLRequestForPath:[_URL path]
+                               POSTParameters:parameters
+                                       scheme:[_URL scheme]
+                                         host:[_URL host]
+                                  consumerKey:self.OAuth1ConsumerKey
+                               consumerSecret:self.OAuth1ConsumerSecret
+                                  accessToken:self.OAuth1AccessToken
+                                  tokenSecret:self.OAuth1AccessTokenSecret];
+        else
+            echo = [GCOAuth URLRequestForPath:[_URL path]
+                                GETParameters:[_URL queryDictionary]
+                                       scheme:[_URL scheme]
+                                         host:[_URL host]
+                                  consumerKey:self.OAuth1ConsumerKey
+                               consumerSecret:self.OAuth1ConsumerSecret
+                                  accessToken:self.OAuth1AccessToken
+                                  tokenSecret:self.OAuth1AccessTokenSecret];
         [_URLRequest setValue:[echo valueForHTTPHeaderField:@"Authorization"] forHTTPHeaderField:@"Authorization"];
         [_URLRequest setValue:[echo valueForHTTPHeaderField:@"Accept-Encoding"] forHTTPHeaderField:@"Accept-Encoding"];
         [_URLRequest setValue:[echo valueForHTTPHeaderField:@"User-Agent"] forHTTPHeaderField:@"User-Agent"];
     }
     
     // OAuth 2 valid request
-    if(self.authenticationType == RKRequestAuthenticationTypeOAuth2){
+    if(self.authenticationType == RKRequestAuthenticationTypeOAuth2) {
         NSString *authorizationString = [NSString stringWithFormat:@"OAuth2 %@",self.OAuth2AccessToken];
         [_URLRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
     }
@@ -408,7 +432,11 @@
 }
 
 - (BOOL)shouldDispatchRequest {
-    return [RKClient sharedClient] == nil || [[RKClient sharedClient] isNetworkAvailable];
+    if (nil == self.reachabilityObserver || NO == [self.reachabilityObserver isReachabilityDetermined]) {
+        return YES;
+    }
+    
+    return [self.reachabilityObserver isNetworkReachable];
 }
 
 - (void)sendAsynchronously {
@@ -464,7 +492,7 @@
 			[self didFinishLoad:[self loadResponseFromCache]];
 
 		} else {
-            RKLogCritical(@"SharedClient = %@ and network availability = %d", [RKClient sharedClient], [[RKClient sharedClient] isNetworkAvailable]);
+            RKLogError(@"Failed to send request to %@ due to unreachable network. Reachability observer = %@", [[self URL] absoluteString], self.reachabilityObserver);
             NSString* errorMessage = [NSString stringWithFormat:@"The client is unable to contact the resource at %@", [[self URL] absoluteString]];
     		NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
     								  errorMessage, NSLocalizedDescriptionKey,
@@ -488,11 +516,11 @@
         _isLoading = YES;
         [self didFinishLoad:response];
     } else if ([self shouldDispatchRequest]) {
-      RKLogDebug(@"Sending synchronous %@ request to URL %@.", [self HTTPMethod], [[self URL] absoluteString]);
-		  if (![self prepareURLRequest]) {
-      // TODO: Logging
-        return nil;
-      }
+        RKLogDebug(@"Sending synchronous %@ request to URL %@.", [self HTTPMethod], [[self URL] absoluteString]);
+        if (![self prepareURLRequest]) {
+            // TODO: Logging
+            return nil;
+        }
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:RKRequestSentNotification object:self userInfo:nil];
 
@@ -687,28 +715,25 @@
         return NO;
     }
     
-    // Multi-part file uploads are not cacheable
-    if (_params && ![_params respondsToSelector:@selector(HTTPBody)]) {
-        return NO;
-    }
-    
     return YES;
 }
 
 - (NSString*)cacheKey {
     if (! [self isCacheable]) {
-        RKLogDebug(@"Asked to return cacheKey for uncacheable request: %@", self);
         return nil;
     }
     
     // Use [_params HTTPBody] because the URLRequest body may not have been set up yet.
     NSString* compositeCacheKey = nil;
-    if (_params && [_params respondsToSelector:@selector(HTTPBody)]) {
-        compositeCacheKey = [NSString stringWithFormat:@"%@-%d-%@", self.URL, _method, [_params HTTPBody]];
+    if (_params) {
+        if ([_params respondsToSelector:@selector(HTTPBody)]) {
+            compositeCacheKey = [NSString stringWithFormat:@"%@-%d-%@", self.URL, _method, [_params HTTPBody]];
+        } else if ([_params isKindOfClass:[RKParams class]]) {
+            compositeCacheKey = [NSString stringWithFormat:@"%@-%d-%@", self.URL, _method, [(RKParams *)_params MD5]];
+        }
     } else {
         compositeCacheKey = [NSString stringWithFormat:@"%@-%d", self.URL, _method];
     }
-    
     NSAssert(compositeCacheKey, @"Expected a cacheKey to be generated for request %@, but got nil", compositeCacheKey);
     return [compositeCacheKey MD5];
 }

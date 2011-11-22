@@ -21,6 +21,7 @@
 #import "RKSpecEnvironment.h"
 #import "RKObjectMappingProvider.h"
 #import "RKErrorMessage.h"
+#import "RKJSONParserJSONKit.h"
 
 // Models
 #import "RKObjectLoaderSpecResultModel.h"
@@ -308,6 +309,33 @@
     
     RKObjectManager* objectManager = RKSpecNewObjectManager();
     [objectManager.router routeClass:[RKSpecComplexUser class] toResourcePath:@"/notNestedUser"];
+    [objectManager.mappingProvider setSerializationMapping:serializationMapping forClass:[RKSpecComplexUser class]];
+    
+    RKSpecComplexUser* user = [[RKSpecComplexUser new] autorelease];
+    user.firstname = @"Blake";
+    user.lastname = @"Watters";
+    user.email = @"blake@restkit.org";
+    
+    RKSpecResponseLoader* responseLoader = [RKSpecResponseLoader responseLoader];
+    RKObjectLoader* loader = [objectManager objectLoaderForObject:user method:RKRequestMethodPOST delegate:responseLoader];
+    loader.objectMapping = mapping;
+    [loader send];
+    [responseLoader waitForResponse];
+    assertThatBool([responseLoader success], is(equalToBool(YES)));
+    assertThat(user.email, is(equalTo(@"changed")));
+}
+
+- (void)itShouldMapContentWithoutAMIMEType {
+    // TODO: Not sure that this is even worth it. Unable to get the Sinatra server to produce such a response
+    return;
+    RKLogConfigureByName("RestKit/Network", RKLogLevelTrace);
+    RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKSpecComplexUser class]];
+    [mapping mapAttributes:@"firstname", @"lastname", @"email", nil];
+    RKObjectMapping* serializationMapping = [mapping inverseMapping];
+    
+    RKObjectManager* objectManager = RKSpecNewObjectManager();
+    [[RKParserRegistry sharedRegistry] setParserClass:[RKJSONParserJSONKit class] forMIMEType:@"text/html"];
+    [objectManager.router routeClass:[RKSpecComplexUser class] toResourcePath:@"/noMIME"];
     [objectManager.mappingProvider setSerializationMapping:serializationMapping forClass:[RKSpecComplexUser class]];
     
     RKSpecComplexUser* user = [[RKSpecComplexUser new] autorelease];
