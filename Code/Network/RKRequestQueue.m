@@ -250,9 +250,11 @@ static const NSTimeInterval kFlushDelay = 0.3;
 	// Make sure that the Request Queue does not fire off any requests until the Reachability state has been determined.
 	if (self.suspended) {
 		_queueTimer = nil;
-		[self loadNextInQueueDelayed];
-        
-        RKLogTrace(@"Deferring request loading for queue %@ due to suspension", self);
+        if (self.loadingCount > 0) {
+            [self loadNextInQueueDelayed];
+            RKLogTrace(@"Deferring request loading for queue %@ due to suspension", self);
+        }
+		
 		return;
 	}
 
